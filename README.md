@@ -2,8 +2,9 @@
 Generates SharePoint and OneDrive site collection admin report
 
 
-### Written by Narh Daniel Tetteh, if you have any error, reach out to me on techjollof@gmail.com
-### NO WARRENT GUARANTEED
+### Written by Daniel, if you have any error, reach out to me on techjollof@gmail.com
+### Comment prove read by Christabel a SharePoint and OneDrive Expert
+### NO WARRANTY IS GUARANTEED
 ### SAMPLE – AS IS, NO WARRANTY This script assumes a connection to SharePoint powershell.
 
     .SYNOPSIS

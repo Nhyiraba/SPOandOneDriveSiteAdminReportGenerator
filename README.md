@@ -1,10 +1,10 @@
-# SPOandOneDriveSiteAdminReportGenerator
+# SPO and OneDrive Site Collection Administrator Report Generator
 Generates SharePoint and OneDrive site collection admin report
 
 
-# Written by Narh Daniel Tetteh, if you have any error, reach out to me on techjollof@gmail.com
-# NO WARRENT GUARANTEED
-# SAMPLE – AS IS, NO WARRANTY This script assumes a connection to SharePoint powershell.
+### Written by Narh Daniel Tetteh, if you have any error, reach out to me on techjollof@gmail.com
+### NO WARRENT GUARANTEED
+### SAMPLE – AS IS, NO WARRANTY This script assumes a connection to SharePoint powershell.
 
     .SYNOPSIS
         Generate SPO/OneDrive site administrators report

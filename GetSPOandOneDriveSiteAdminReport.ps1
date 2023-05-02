@@ -38,7 +38,7 @@
 [CmdletBinding()]
 param(
     
-    [Parameter(HelpMessage="GlobalSPOAdminAddress to given access to the OneDrive site collection admin, thsi should be the address run Connect-SPOService.")]
+    [Parameter(Mandatory=$true,HelpMessage="GlobalSPOAdminAddress to given access to the OneDrive site collection admin, thsi should be the address run Connect-SPOService.")]
     [string]
     $GlobalSPOAdminAddress,
     

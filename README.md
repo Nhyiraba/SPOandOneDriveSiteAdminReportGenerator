@@ -79,4 +79,8 @@ This section of the code will only run if the exported csv us empty
    
 ```
 
+For more information
+- <a href ="https://learn.microsoft.com/en-us/powershell/module/sharepoint-online/get-sposite?view=sharepoint-ps" target = "_blank" > Get-SPOSite </a>
+- <a href ="https://learn.microsoft.com/en-us/powershell/module/sharepoint-online/get-spouser?view=sharepoint-ps" target = "_blank" > Get-SPOUser</a>
 
+Share, like and commend if you like it and foud it helpful

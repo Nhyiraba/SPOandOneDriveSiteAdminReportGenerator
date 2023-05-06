@@ -38,7 +38,7 @@
 [CmdletBinding()]
 param(
     
-    [Parameter(Mandatory=$true,HelpMessage="GlobalSPOAdminAddress to given access to the OneDrive site collection admin, thsi should be the address run Connect-SPOService.")]
+    [Parameter(Mandatory,HelpMessage="GlobalSPOAdminAddress to given access to the OneDrive site collection admin, thsi should be the address run Connect-SPOService.")]
     [string]
     $GlobalSPOAdminAddress,
     
@@ -119,10 +119,19 @@ $SPOSiteURL | ForEach-Object {
 
 }
 
+# file name of the report
+if ($SiteAdminReportType) {
+    $ExportFileName = ".\SiteCollectionAdministrator_Report_for_$($SiteAdminReportType)"
+}else{
+    $ExportFileName = ".\SiteCollectionAdministrator_Report_for_All"
+}
+
 #Exporting results of the generation
 Write-Result "`n`nExorting the report......... to the same location`n"
-if ($SiteAdminReportType) {
-    $SiteOwnerResults | Export-Csv ".\SiteCollectionAdministrator_Report_for_$($SiteAdminReportType).csv" -NoTypeInformation
-}else{
-    $SiteOwnerResults | Export-Csv ".\SiteCollectionAdministrator_Report_for_All.csv" -NoTypeInformation
+$SiteOwnerResults | Export-Csv $($ExportFileName)+".csv" -UseCulture -NoTypeInformation
+
+# Validate of the generated report is empty
+if($null -eq (Import-Csv $ExportFileName)){
+    Install-Module ImportExcel -AllowClobber -Force -Scope CurrentUser
+    $SiteOwnerResults | Export-Excel $($ExportFileName)+".xlsx"
 }

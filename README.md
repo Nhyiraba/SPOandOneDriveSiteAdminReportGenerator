@@ -14,36 +14,39 @@ Comment prove read by Christabel a SharePoint and OneDrive Expert
 <br>
 
 ##### SYNOPSIS
-        Generate SPO/OneDrive site collection administrators report
+>Generate SPO/OneDrive site collection administrators report
         
  
 ##### DESCRIPTION
-        You need to be a site admin to run the command Get-SPOUser.
-        This script takes care of that work and removes the user after addding and getting the required information.
-        The account used to connect-sposervice should serve as admin account.Account must GA or SPO admin
+>You need to be a site admin to run the command Get-SPOUser.
+This script takes care of that work and removes the user after addding and getting the required information.
+The account used to connect-sposervice should serve as admin account.Account must GA or SPO admin
     
 ##### GlobalSPOAdminAddress
-        GlobalSPOAdminAddress is the address that will be granted OneDrive/SPO site collection admin permission, if permission does 
-        not exist, the command Get-SPOUser will generate error "Access is denied. (Exception from HRESULT: 0x80070005 (E_ACCESSDENIED))" 
-        This should be the address that runs Connect-SPOService. This is mandatory, if not provided, it will requested.
+>GlobalSPOAdminAddress is the address that will be granted OneDrive/SPO site collection admin permission, if permission does 
+not exist, the command Get-SPOUser will generate error "Access is denied. (Exception from HRESULT: 0x80070005 (E_ACCESSDENIED))" 
+This should be the address that runs Connect-SPOService. This is mandatory, if not provided, it will requested.
 
 ##### SiteAdminReportType
-        You can select type of report you want to generate, the values are OneDriveOnly, SharedChannelSiteOnly,PriviteChannelSiteOnly, 
-        CommunicationSiteOnly, AllTeamsSiteOnly, ParentTeamSiteOnly, ClassicSiteOnly..if this value is not specified, report will be
-        generated for all SPO/OneDrive sites
+>You can select type of report you want to generate, the values are OneDriveOnly, SharedChannelSiteOnly,PriviteChannelSiteOnly, 
+CommunicationSiteOnly, AllTeamsSiteOnly, ParentTeamSiteOnly, ClassicSiteOnly..if this value is not specified, report will be
+generated for all SPO/OneDrive sites
   
 
 <h2 style="color:yellow;">  How to use the this script </h2>
 
 - Donwload the folder and extract the content. 
-  - E.g C:\Users\NAME\Download\OneDriveRport, this is equal to $Home\Downloads\OneDriveRport
-- Open PowerShell and cd (change directory) in the to the folder
-- Type the following
-
+  >E.g C:\Users\NAME\Download\SPOandOneDriveSiteAdminReportGenerator, this is equal to $Home\Downloads\SPOandOneDriveSiteAdminReportGenerator
+- Open PowerShell and cd (change directory) in the to the folder by typing the following
 
 ``` powershell
-cd C:\Users\PNDT\Downloads\OneDriveSPOReport
+cd C:\Users\PNDT\Downloads\SPOandOneDriveSiteAdminReportGenerator
 ```
+
+- Connect to SPO powershell and replace <i style="color:orange">TENANTNAME</i> by your sharepoint admin name. Sign in the with the admin accont used <i style="color:orange"> GlobalSPOAdminAddress</i>
+  ```powershell
+  Connect-SPOService -Url https://TENANTNAME-admin.sharepoint.com
+  ```
 - Then you run the script by the following
 
         
@@ -61,16 +64,15 @@ cd C:\Users\PNDT\Downloads\OneDriveSPOReport
     .\GetSPOandOneDriveSiteAdminReport.ps1 -GlobalSPOAdminAddress techjollof@constoso.com -SiteAdminReportType OneDriveOnly 
  ```
 
-
-The report will be generated in the same folder where the script is location
+#### Result location
+> The report will be generated in the same folder where the script is location
 
 <b><br>
 
-<p style="color:yellow;"> Additional steps if the export file is empty but the powershell shows results  </p>
+<h3 style="color:yellow;"> Additional steps if the export file is empty but the powershell shows results  </h3>
 
-The export csv is tested if its empty and no header data, the Excel module is installed in the current user scope and 
-export to xlsx file is exported.
-
+>The exported csv is tested if its empty
+If the file is empty then Excel module is installed in the current user scope or context and results is exported as direct excel xlsx file.
 This section of the code will only run if the exported csv us empty
 
 ```powershell
@@ -82,5 +84,7 @@ This section of the code will only run if the exported csv us empty
 For more information
 - <a href ="https://learn.microsoft.com/en-us/powershell/module/sharepoint-online/get-sposite?view=sharepoint-ps" target = "_blank" > Get-SPOSite </a>
 - <a href ="https://learn.microsoft.com/en-us/powershell/module/sharepoint-online/get-spouser?view=sharepoint-ps" target = "_blank" > Get-SPOUser</a>
+- <a href = "https://learn.microsoft.com/en-us/powershell/sharepoint/sharepoint-online/connect-sharepoint-online" target = "_blank"> Get started with SharePoint Online Management Shell </a>
 
-Share, like and commend if you like it and foud it helpful
+
+## Share, like and commend if you like it and foud it helpful

@@ -50,11 +50,11 @@ param(
 )
  
 #console write
-function Write-Result ([string]$TextData, [switch]$isError) {
+function Write-Result ([string]$TextData, [switch]$isError, [string]$Color ="Yellow") {
     if($isError){
         Write-Host $TextData -ForegroundColor Red
     }else{
-        Write-Host $TextData -ForegroundColor Yellow
+        Write-Host $TextData -ForegroundColor $Color
     }
 }
 
@@ -85,31 +85,39 @@ $SiteOwnerResults = @()
 #grant your self access to all sites
 $SPOSiteURL | ForEach-Object { 
 
+    #CurrentSite
     $SiteURL = $_
-    if($SiteURL.Owner -ne $GlobalSPOAdminAddress){
 
-        #gettings site information
-        try {
-            $SiteCollectionAdmins = Get-SPOUser -Site $SiteURL.Url  | Where-Object {$_.IsSiteAdmin}
+    #write progress
+    $progressCount += 1
+    $SiteDataRetrivalProgress =  @{
+        Activity         = "Getting site collection admins: All $($SiteAdminReportType)"
+        Status           = "$($progressCount) sites of $($SPOSiteURL.Count) processed which is $([int](($progressCount/$SPOSiteURL.Count)*100)) percent. "
+        PercentComplete  = $([int](($progressCount/$SPOSiteURL.Count)*100))
+        CurrentOperation = "Currently processing $($SiteURL.URL)"
+    }
+
+    #gettings site information
+    try {
+        $SiteCollectionAdmins = Get-SPOUser -Site $SiteURL.Url  | Where-Object {$_.IsSiteAdmin}
+        if ($null -ne $SiteCollectionAdmins) {
+            Write-Result "`nUser: $($GlobalSPOAdminAddress) is either direct or indirect site owner of  $($SiteURL.Url)" -Color "Green"
         }
-        catch {
-            # adding site admin
-            Write-Result "`nAdmin $($GlobalSPOAdminAddress) is the not the site owner for $($SiteURL.Url)" -isError
-            Write-Result "`tAdding admin to site owners"
-            Set-SPOUser -Site $SiteURL.Url -LoginName $GlobalSPOAdminAddress -IsSiteCollectionAdmin:$true > $null
-            Write-Result "`tAdmin added successfully" 
-            Write-Result "`tGetting all site admin and removing admin from site owners"
-            $SiteCollectionAdmins = Get-SPOUser -Site $SiteURL.Url  | Where-Object {$_.IsSiteAdmin -and $_.LoginName -ne $GlobalSPOAdminAddress}
-            Set-SPOUser -Site $SiteURL.Url -LoginName $GlobalSPOAdminAddress -IsSiteCollectionAdmin:$false > $null
-        }
-    }else{
-        Write-Result "`nUser: $($GlobalSPOAdminAddress)  is already an ower  $($SiteURL.Url)"
-        $SiteCollectionAdmins = Get-SPOUser -Site $SiteURL.Url | Where-Object {$_.IsSiteAdmin}
+    }
+    catch {
+        # adding site admin
+        Write-Result "`nAdmin $($GlobalSPOAdminAddress) is the not the site owner for $($SiteURL.Url)" -isError
+        Write-Result "`tAdding admin to site owners"
+        Set-SPOUser -Site $SiteURL.Url -LoginName $GlobalSPOAdminAddress -IsSiteCollectionAdmin:$true > $null
+        Write-Result "`tAdmin added successfully" 
+        Write-Result "`tGetting all site admin and removing admin from site owners"
+        $SiteCollectionAdmins = Get-SPOUser -Site $SiteURL.Url  | Where-Object {$_.IsSiteAdmin -and $_.LoginName -ne $GlobalSPOAdminAddress}
+        Set-SPOUser -Site $SiteURL.Url -LoginName $GlobalSPOAdminAddress -IsSiteCollectionAdmin:$false > $null
     }
 
     #adding and collating collected data
     $SiteOwnerResults += [PSCustomObject]@{
-        PrimaryOwner            = $SiteURL.Title
+        DisplayName             = $SiteURL.Title
         PrimaryOwnerEmail       = $SiteURL.Owner
         OtherAdminsDisplayName  = $SiteCollectionAdmins.DisplayName -join ','
         OtherAdminsEmail        = $SiteCollectionAdmins.LoginName -join ','
@@ -117,6 +125,8 @@ $SPOSiteURL | ForEach-Object {
         SiteURL                 = $SiteURL.Url
     }
 
+    # write progress
+    Write-Progress @SiteDataRetrivalProgress
 }
 
 # file name of the report
@@ -128,10 +138,14 @@ if ($SiteAdminReportType) {
 
 #Exporting results of the generation
 Write-Result "`n`nExorting the report......... to the same location`n"
-$SiteOwnerResults | Export-Csv $($ExportFileName)+".csv" -UseCulture -NoTypeInformation
+$SiteOwnerResults | Export-Csv "$($ExportFileName).csv" -UseCulture -NoTypeInformation
 
 # Validate of the generated report is empty
-if($null -eq (Import-Csv $ExportFileName)){
-    Install-Module ImportExcel -AllowClobber -Force -Scope CurrentUser
-    $SiteOwnerResults | Export-Excel $($ExportFileName)+".xlsx"
+if(($null -eq (Import-Csv "$($ExportFileName).csv")) -or (Test-Path("$($ExportFileName).csv"))){
+    
+    if($null -eq (Get-Module ImportExcel)){
+        Write-Result "Excel modele is not insalled. Installing........." -Color "gray"
+        Install-Module ImportExcel -AllowClobber -Force -Scope CurrentUser
+    }
+    $SiteOwnerResults | Export-Excel "$($ExportFileName).xlsx"
 }
